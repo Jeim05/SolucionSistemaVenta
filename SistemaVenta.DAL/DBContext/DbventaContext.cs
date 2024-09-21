@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using SistemaVenta.Entity;
 
 namespace SistemaVenta.DAL.DBContext;
 
