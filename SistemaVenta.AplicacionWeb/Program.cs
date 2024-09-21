@@ -1,7 +1,14 @@
+using SistemaVenta.IOC;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+// SE HACE REFERENCIA A LA INYECCION DE TODAS LAS DEPENDENCIAS
+// y con eso ya no hay que estar llamando cada una por separado.
+builder.Services.InyectarDependencia(builder.Configuration);
 
 var app = builder.Build();
 
