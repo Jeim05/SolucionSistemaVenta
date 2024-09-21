@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SistemaVenta.Entity;
 
-public partial class TipoDocumentoVentum
+public partial class TipoDocumentoVenta
 {
     public int IdTipoDocumentoVenta { get; set; }
 
@@ -13,5 +13,5 @@ public partial class TipoDocumentoVentum
 
     public DateTime? FechaRegistro { get; set; }
 
-    public virtual ICollection<Ventum> Venta { get; set; } = new List<Ventum>();
+    public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
 }

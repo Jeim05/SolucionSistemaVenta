@@ -34,11 +34,11 @@ public partial class DbventaContext : DbContext
 
     public virtual DbSet<RolMenu> RolMenus { get; set; }
 
-    public virtual DbSet<TipoDocumentoVentum> TipoDocumentoVenta { get; set; }
+    public virtual DbSet<TipoDocumentoVenta> TipoDocumentoVenta { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-    public virtual DbSet<Ventum> Venta { get; set; }
+    public virtual DbSet<Venta> Venta { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -298,7 +298,7 @@ public partial class DbventaContext : DbContext
                 .HasConstraintName("FK__RolMenu__idRol__3D5E1FD2");
         });
 
-        modelBuilder.Entity<TipoDocumentoVentum>(entity =>
+        modelBuilder.Entity<TipoDocumentoVenta>(entity =>
         {
             entity.HasKey(e => e.IdTipoDocumentoVenta).HasName("PK__TipoDocu__A9D59AEE8C5FA33A");
 
@@ -357,7 +357,7 @@ public partial class DbventaContext : DbContext
                 .HasConstraintName("FK__Usuario__idRol__4222D4EF");
         });
 
-        modelBuilder.Entity<Ventum>(entity =>
+        modelBuilder.Entity<Venta>(entity =>
         {
             entity.HasKey(e => e.IdVenta).HasName("PK__Venta__077D561414A159D1");
 
