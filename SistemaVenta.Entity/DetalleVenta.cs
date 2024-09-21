@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SistemaVenta.Entity;
 
-public partial class DetalleVentum
+public partial class DetalleVenta
 {
     public int IdDetalleVenta { get; set; }
 
