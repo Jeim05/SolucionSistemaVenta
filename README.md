@@ -4,6 +4,9 @@
 Web project based in Sales web platform, this project is build with asp .net core, sql server and others.
 
 ## Tools:
+- Asp .net core
+- SQL Server
+- Entity Framework
 
 ## Characteristics
 
