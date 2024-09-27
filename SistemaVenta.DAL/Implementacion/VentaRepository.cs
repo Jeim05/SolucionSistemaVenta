@@ -37,6 +37,7 @@ namespace SistemaVenta.DAL.Implementacion
                     {
                         Producto producto_encontrado = _dbContext.Productos.Where(p=>p.IdProducto == dv.IdProducto).First();
                         producto_encontrado.Stock = producto_encontrado.Stock - dv.Cantidad;
+                        _dbContext.Productos.Update(producto_encontrado);
                     }
                 }
                 catch (Exception ex)

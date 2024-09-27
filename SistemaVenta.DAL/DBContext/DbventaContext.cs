@@ -30,7 +30,7 @@ public partial class DbventaContext : DbContext
 
     public virtual DbSet<Producto> Productos { get; set; }
 
-    public virtual DbSet<Rol> Rols { get; set; }
+    public virtual DbSet<Rol> Roles { get; set; }
 
     public virtual DbSet<RolMenu> RolMenus { get; set; }
 
