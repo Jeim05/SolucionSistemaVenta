@@ -24,7 +24,7 @@ namespace SistemaVenta.DAL.Implementacion
             _dbContext = dbContext;
         }
 
-        public Task<Venta> Registrar(Venta entidad)
+        public async Task<Venta> Registrar(Venta entidad)
         {
             Venta ventaGenerada = new Venta();
 
@@ -39,12 +39,36 @@ namespace SistemaVenta.DAL.Implementacion
                         producto_encontrado.Stock = producto_encontrado.Stock - dv.Cantidad;
                         _dbContext.Productos.Update(producto_encontrado);
                     }
+                    await _dbContext.SaveChangesAsync();
+
+                    // Hacemos esto para que se actualice en la BD
+                    NumeroCorrelativo correlativo = _dbContext.NumeroCorrelativos.Where(n=>n.Gestion == "venta").First();
+                    correlativo.UltimoNumero = correlativo.UltimoNumero + 1;
+                    correlativo.FechaActualizacion = DateTime.Now;
+
+                    // Se actualizan y guardan los cambios
+                    _dbContext.NumeroCorrelativos.Update(correlativo);
+                    await _dbContext.SaveChangesAsync();
+
+                    // Obtenemos este formato 000001
+                    string ceros = string.Concat(Enumerable.Repeat("0", correlativo.CantidadDigitos.Value));
+                    string numeroVenta = ceros + correlativo.UltimoNumero.ToString();
+                    numeroVenta = numeroVenta.Substring(numeroVenta.Length - correlativo.CantidadDigitos.Value, correlativo.CantidadDigitos.Value);
+
+                    entidad.NumeroVenta = numeroVenta;
+                    await _dbContext.AddAsync(entidad);
+                    await _dbContext.SaveChangesAsync();
+
+                    ventaGenerada = entidad;
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
                     throw ex;
                 }
+
+                return ventaGenerada;
             }
         }
 
