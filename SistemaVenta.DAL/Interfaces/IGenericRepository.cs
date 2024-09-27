@@ -8,7 +8,8 @@ using System.Linq.Expressions;
 
 namespace SistemaVenta.DAL.Interfaces
 {
-    public interface IGenericRepository<TEntity> where TEntity : class // decimo que ese TEntity es una clase
+    // decimos que ese TEntity es una clase
+    public interface IGenericRepository<TEntity> where TEntity : class 
     {
         Task<TEntity> Obtener(Expression<Func<TEntity, bool>> filtro);
         Task<TEntity> Crear(TEntity entidad);
