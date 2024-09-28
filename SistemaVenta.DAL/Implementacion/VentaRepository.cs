@@ -72,9 +72,9 @@ namespace SistemaVenta.DAL.Implementacion
             }
         }
 
-        public Task<List<Venta>> Reporte(DateTime FechaInicio, DateTime FechaFin)
+        public async Task<List<Venta>> Reporte(DateTime FechaInicio, DateTime FechaFin)
         {
-            throw new NotImplementedException();
+            List<DetalleVenta> listaResumen = await _dbContext.DetalleVenta.Include();
         }
     }
 }
