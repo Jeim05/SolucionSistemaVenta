@@ -74,7 +74,11 @@ namespace SistemaVenta.DAL.Implementacion
 
         public async Task<List<Venta>> Reporte(DateTime FechaInicio, DateTime FechaFin)
         {
-            List<DetalleVenta> listaResumen = await _dbContext.DetalleVenta.Include();
+        // El include sirve como un join entre las tablas
+            List<DetalleVenta> listaResumen = await _dbContext.DetalleVenta
+            .Include(v=>v.IdVentaNavigation) // funciona para el detalle venta
+            .ThenInclude(u=>u.IdUsuarioNavigation) // funciona para la venta del primer include
+            .Include();
         }
     }
 }
