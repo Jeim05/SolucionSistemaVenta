@@ -72,13 +72,19 @@ namespace SistemaVenta.DAL.Implementacion
             }
         }
 
-        public async Task<List<Venta>> Reporte(DateTime FechaInicio, DateTime FechaFin)
+        public async Task<List<DetalleVenta>> Reporte(DateTime FechaInicio, DateTime FechaFin)
         {
         // El include sirve como un join entre las tablas
             List<DetalleVenta> listaResumen = await _dbContext.DetalleVenta
             .Include(v=>v.IdVentaNavigation) // funciona para el detalle venta
             .ThenInclude(u=>u.IdUsuarioNavigation) // funciona para la venta del primer include
-            .Include();
+            .Include(v=>v.IdVentaNavegacion)
+            .ThenInclude(tdv=>tdv.IdTipoDocumentoVentaNavigation)
+            .Where(dv=>IdVentaNavigation.FechaRegistro.Value.Date>=FechaInicio.Date&&
+              dv.IdVentaNavigation.FechaRegistro.Value.Date<=FechaFin.Date)
+              .ToListAsync();
+
+              return listaResumen;
         }
     }
 }
