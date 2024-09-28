@@ -8,8 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SistemaVenta.DAL.DBContext;
 using Microsoft.EntityFrameworkCore;
-//using SistemaVenta.Interfaces;
-//using SistemaVenta.DAL.Implementacion;
+using SistemaVenta.Interfaces;
+using SistemaVenta.DAL.Implementacion;
 //using SistemaVenta.BLL.Interfaces;
 //using SistemaVenta.BLL.Implementacion;
 
@@ -22,6 +22,8 @@ namespace SistemaVenta.IOC
             {
                 options.UseSqlServer(Configuration.GetConnectionString("CadenaSQL"));
             });
+
+            services.AddTransient(typeoff())
         }
     }
 }
