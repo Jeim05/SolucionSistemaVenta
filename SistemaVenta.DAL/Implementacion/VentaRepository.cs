@@ -78,9 +78,9 @@ namespace SistemaVenta.DAL.Implementacion
             List<DetalleVenta> listaResumen = await _dbContext.DetalleVenta
             .Include(v=>v.IdVentaNavigation) // funciona para el detalle venta
             .ThenInclude(u=>u.IdUsuarioNavigation) // funciona para la venta del primer include
-            .Include(v=>v.IdVentaNavegacion)
+            .Include(v=>v.IdVentaNavigation)
             .ThenInclude(tdv=>tdv.IdTipoDocumentoVentaNavigation)
-            .Where(dv=>IdVentaNavigation.FechaRegistro.Value.Date>=FechaInicio.Date&&
+            .Where(dv=>dv.IdVentaNavigation.FechaRegistro.Value.Date>=FechaInicio.Date&&
               dv.IdVentaNavigation.FechaRegistro.Value.Date<=FechaFin.Date)
               .ToListAsync();
 
