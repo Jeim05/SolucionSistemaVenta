@@ -86,5 +86,10 @@ namespace SistemaVenta.DAL.Implementacion
             IQueryable<TEntity> queryEntidad = filtro == null ? _dbContext.Set<TEntity>() : _dbContext.Set<TEntity>().Where(filtro);
             return queryEntidad;
         }
+
+        public Task<IQueryable<TEntity>> Consulta(Expression<Func<TEntity, bool>> filtro = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
