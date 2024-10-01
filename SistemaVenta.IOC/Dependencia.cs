@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SistemaVenta.DAL.DBContext;
 using Microsoft.EntityFrameworkCore;
-using SistemaVenta.Interfaces;
+using SistemaVenta.DAL.Interfaces;
 using SistemaVenta.DAL.Implementacion;
 //using SistemaVenta.BLL.Interfaces;
 //using SistemaVenta.BLL.Implementacion;
@@ -23,7 +23,13 @@ namespace SistemaVenta.IOC
                 options.UseSqlServer(Configuration.GetConnectionString("CadenaSQL"));
             });
 
-            services.AddTransient(typeoff())
+
+            // Transient indica que van a variar sus valores, ya que estamos trabajando con una 
+            // clase generica
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            // De esta manera ya estamos utilizando la inyección de depencias 
+            services.AddScoped<IVentaRepository, VentaRepository>();
         }
     }
 }
