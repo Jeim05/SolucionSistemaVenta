@@ -10,8 +10,8 @@ using SistemaVenta.DAL.DBContext;
 using Microsoft.EntityFrameworkCore;
 using SistemaVenta.DAL.Interfaces;
 using SistemaVenta.DAL.Implementacion;
-//using SistemaVenta.BLL.Interfaces;
-//using SistemaVenta.BLL.Implementacion;
+using SistemaVenta.BLL.Interfaces;
+using SistemaVenta.BLL.Implementacion;
 
 namespace SistemaVenta.IOC
 {
@@ -30,6 +30,9 @@ namespace SistemaVenta.IOC
 
             // De esta manera ya estamos utilizando la inyección de depencias 
             services.AddScoped<IVentaRepository, VentaRepository>();
+
+            // Dependencia del envio del correo
+            services.AddScoped<ICorreoService, CorreoService>();
         }
     }
 }
