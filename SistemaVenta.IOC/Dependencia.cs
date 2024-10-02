@@ -36,6 +36,12 @@ namespace SistemaVenta.IOC
 
             // Dependencia de Firebase
             services.AddScoped<IFirebaseService, FirebaseService>();
+
+            // Dependencia de las utilidades
+            services.AddScoped<IUtilidadesService, UtilidadesServices>();
+
+            // Dependencia de Roles
+            services.AddScoped<IRolServices, RolService>();
         }
     }
 }
