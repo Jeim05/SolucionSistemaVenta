@@ -7,6 +7,7 @@ Web project based in Sales web platform, this project is build with asp .net cor
 - Asp .net core
 - SQL Server
 - Entity Framework core
+- Firebase
 
 ## Characteristics
 - Adding database connection and implement the Entities.
