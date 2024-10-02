@@ -22,8 +22,7 @@ namespace SistemaVenta.BLL.Implementacion
             _repositorio = repositorio;
         }
 
-
-        public async Task<string> EliminarStorage(string CarpetaDestino, string NombreArchivo)
+        public async Task<string> SubirStorage(Stream StreamArchivo, string CarpetaDestino, string NombreArchivo)
         {
             string UrlImagen = "";
 
@@ -36,16 +35,31 @@ namespace SistemaVenta.BLL.Implementacion
 
                 // Se crea la autorización
                 var auth = new FirebaseAuthProvider(new FirebaseConfig(Config["api_key"]));
+                var a = await auth.SignInWithEmailAndPasswordAsync(Config["email"], Config["clave"]);
 
+                // Se crea u token de cancelacion
+                var cancellationToken = new CancellationTokenSource();
+
+                var task = new FirebaseStorage(
+                Config["ruta"],
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true // en caso de que ocurra un error se cancecla
+                }).Child(Config[CarpetaDestino])
+                  .Child(NombreArchivo) // El Child aparte de crear carpetas sirve para crear archivos;
+                  .PutAsync(StreamArchivo, cancellationToken.Token);
+
+                UrlImagen = await task;
             }
             catch (Exception)
             {
-
-                throw;
+                UrlImagen = "";
             }
+            return UrlImagen;
         }
 
-        public Task<string> SubirStorage(Stream StreamArchivo, string CarpetaDestino, string NombreArchivo)
+        public Task<string> EliminarStorage(string CarpetaDestino, string NombreArchivo)
         {
             throw new NotImplementedException();
         }
