@@ -33,6 +33,9 @@ namespace SistemaVenta.IOC
 
             // Dependencia del envio del correo
             services.AddScoped<ICorreoService, CorreoService>();
+
+            // Dependencia de Firebase
+            services.AddScoped<IFirebaseService, FirebaseService>();
         }
     }
 }
