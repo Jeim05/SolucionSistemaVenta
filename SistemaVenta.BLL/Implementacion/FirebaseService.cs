@@ -59,9 +59,37 @@ namespace SistemaVenta.BLL.Implementacion
             return UrlImagen;
         }
 
-        public Task<string> EliminarStorage(string CarpetaDestino, string NombreArchivo)
+        public async Task<bool> EliminarStorage(string CarpetaDestino, string NombreArchivo)
         {
-            throw new NotImplementedException();
+    
+            try
+            {
+                IQueryable<Configuracion> query = await _repositorio.Consulta(c => c.Recurso.Equals("FireBase_Storage"));
+
+                // Creamos un diccionario para guardar la propiedad y valor de la tabla Config
+                Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector: c => c.Valor);
+
+                // Se crea la autorización
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(Config["api_key"]));
+                var a = await auth.SignInWithEmailAndPasswordAsync(Config["email"], Config["clave"]);
+
+                // Se crea u token de cancelacion
+                var cancellationToken = new CancellationTokenSource();
+
+                var task = new FirebaseStorage(
+                Config["ruta"],
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true // en caso de que ocurra un error se cancecla
+                }).Child(Config[CarpetaDestino])
+                  .Child(NombreArchivo) // El Child aparte de crear carpetas sirve para crear archivos;
+                  .DeleteAsync();
+
+                return true;  
+            }catch { 
+            return false;
+            }
         }
     }
 }
