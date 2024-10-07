@@ -12,6 +12,7 @@ Web project based in Sales web platform, this project is build with asp .net cor
 ## Characteristics
 - Adding database connection and implement the Entities.
 - Include the dependencies and different services of the system to send Emails and upload images in Firebase.
+- Implement ViewModels for the entities, this to avoid using the Entity directly and only add necessary atributes. 
 
 
 
