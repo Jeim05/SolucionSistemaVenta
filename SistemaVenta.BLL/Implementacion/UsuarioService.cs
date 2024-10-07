@@ -155,7 +155,7 @@ namespace SistemaVenta.BLL.Implementacion
         {
             try
             {
-                Usuario usuario_encontrado = await _repositorio.Obtener(u =>u.IdUsuario=IdUsuario);
+                Usuario usuario_encontrado = await _repositorio.Obtener(u =>u.IdUsuario.Equals(IdUsuario));
 
                 if (usuario_encontrado == null)
                     throw new TaskCanceledException("El usuario no existe");
@@ -180,9 +180,12 @@ namespace SistemaVenta.BLL.Implementacion
             throw new NotImplementedException();
         }
 
-        public Task<Usuario> ObtenerPorCredenciales(string correo, string clave)
+        public async Task<Usuario> ObtenerPorCredenciales(string correo, string clave)
         {
-            throw new NotImplementedException();
+            string clave_encriptada = _utilidadesService.ConvertirSha256(clave);
+            Usuario usuario_encontrado = await _repositorio.Obtener(u =>u.Correo.Equals(correo) &&u.Clave.Equals(clave_encriptada));
+
+            return usuario_encontrado;
         }
 
         public Task<Usuario> ObtenerPorId(int IdUsuario)
