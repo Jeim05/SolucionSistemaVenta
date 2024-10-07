@@ -27,7 +27,7 @@ namespace SistemaVenta.BLL.Implementacion
         {
             try
             {
-                IQueryable<Configuracion> query = await _repositorio.Consulta(c => c.Recurso.Equals("Servicio_Correo"));
+                IQueryable<Configuracion> query = await _repositorio.Consultar(c => c.Recurso.Equals("Servicio_Correo"));
 
                 // Creamos un diccionario para guardar la propiedad y valor de la tabla Config
                 Dictionary<string, string> Config = query.ToDictionary(keySelector: c => c.Propiedad, elementSelector:c=>c.Valor);
