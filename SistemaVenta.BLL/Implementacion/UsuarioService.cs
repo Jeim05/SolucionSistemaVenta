@@ -10,6 +10,7 @@ using SistemaVenta.BLL.Interfaces;
 using SistemaVenta.DAL.Interfaces;
 using SistemaVenta.Entity;
 using Firebase.Auth;
+using System.Security.Principal;
 
 namespace SistemaVenta.BLL.Implementacion
 {
@@ -155,7 +156,7 @@ namespace SistemaVenta.BLL.Implementacion
         {
             try
             {
-                Usuario usuario_encontrado = await _repositorio.Obtener(u =>u.IdUsuario.Equals(IdUsuario));
+                Usuario usuario_encontrado = await _repositorio.Obtener(u =>u.IdUsuario==IdUsuario);
 
                 if (usuario_encontrado == null)
                     throw new TaskCanceledException("El usuario no existe");
@@ -173,12 +174,7 @@ namespace SistemaVenta.BLL.Implementacion
             {
                 throw;
             }
-        }
-
-        public Task<bool> GuardarPerfil(Usuario entidad)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public async Task<Usuario> ObtenerPorCredenciales(string correo, string clave)
         {
@@ -188,9 +184,31 @@ namespace SistemaVenta.BLL.Implementacion
             return usuario_encontrado;
         }
 
-        public Task<Usuario> ObtenerPorId(int IdUsuario)
+        public async Task<Usuario> ObtenerPorId(int IdUsuario)
         {
-            throw new NotImplementedException();
+            IQueryable<Usuario> query = await _repositorio.Consultar(u => u.IdUsuario == IdUsuario);
+            Usuario resultado = query.Include(r =>r.IdRolNavigation).FirstOrDefault();
+            return resultado;
+        }
+
+        public async Task<bool> GuardarPerfil(Usuario entidad)
+        {
+            try
+            {
+                Usuario usuario_encontrado = await _repositorio.Obtener(u => u.IdUsuario == entidad.IdUsuario);
+                if (usuario_encontrado==null)
+                    throw new TaskCanceledException("El usuario no existe");
+                usuario_encontrado.Correo = entidad.Correo;
+                usuario_encontrado.Telefono = entidad.Telefono;
+
+                bool respuesta = await _repositorio.Editar(usuario_encontrado); 
+                return respuesta;
+                
+            }
+            catch 
+            {
+                throw;
+            }
         }
 
         public Task<bool> CambiarClave(int IdUsuario, string ClaveActual, string ClaveNueva)
