@@ -39,85 +39,116 @@ namespace SistemaVenta.BLL.Implementacion
         public async Task<List<Usuario>> Lista()
         {
             IQueryable<Usuario> query = await _repositorio.Consultar();
-            return query.Include(rol=>rol.IdRolNavigation).ToList();
+            return query.Include(rol => rol.IdRolNavigation).ToList();
         }
 
         public async Task<Usuario> Crear(Usuario entidad, Stream foto = null, string NombreFoto = "", string UrlPlantillaCorreo = "")
         {
             Usuario usuario_existe = await _repositorio.Obtener(user => user.Correo == entidad.Correo);
             if (usuario_existe != null)
-            {
                 throw new TaskCanceledException("El correo ya existe");
 
-                try
+            try
+            {
+                string claveGenerada = _utilidadesService.GenerarClave();
+                entidad.Clave = _utilidadesService.ConvertirSha256(claveGenerada);
+                entidad.NombreFoto = NombreFoto;
+
+                if (foto != null)
                 {
-                    string claveGenerada = _utilidadesService.GenerarClave();
-                    entidad.Clave = _utilidadesService.ConvertirSha256(claveGenerada);
-                    entidad.NombreFoto = NombreFoto;
+                    string urlFoto = await _firebaseService.SubirStorage(foto, "carpeta_usuario", NombreFoto);
+                    entidad.UrlFoto = urlFoto;
+                }
 
-                    if (foto!= null)
+                Usuario usuario_creado = await _repositorio.Crear(entidad);
+
+                if (usuario_creado.IdUsuario == 0)
+                {
+                    throw new TaskCanceledException("No se pudo crear el usuario");
+                }
+
+                if (UrlPlantillaCorreo != "")
+                {
+                    UrlPlantillaCorreo = UrlPlantillaCorreo.Replace("[correo]", usuario_creado.Correo).Replace("clave", claveGenerada);
+
+                    string htmlCorreo = "";
+
+                    //Se hace lectura de la plantilla chtml
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(UrlPlantillaCorreo);
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        string urlFoto = await _firebaseService.SubirStorage(foto, "carpeta_usuario", NombreFoto);
-                        entidad.UrlFoto= urlFoto;
-                    }
-
-                    Usuario usuario_creado = await _repositorio.Crear(entidad);
-
-                    if (usuario_creado.IdUsuario==0)
-                    {
-                        throw new TaskCanceledException("No se pudo crear el usuario");
-                    }
-
-                    if (UrlPlantillaCorreo != "")
-                    {
-                        UrlPlantillaCorreo = UrlPlantillaCorreo.Replace("[correo]", usuario_creado.Correo).Replace("clave",claveGenerada);
-
-                        string htmlCorreo = "";
-
-                        //Se hace lectura de la plantilla chtml
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(UrlPlantillaCorreo);
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                        if(response.StatusCode == HttpStatusCode.OK)
+                        using (Stream dataStream = response.GetResponseStream())
                         {
-                            using (Stream dataStream = response.GetResponseStream())
+                            StreamReader readerStream = null;
+
+                            if (response.CharacterSet == null)
                             {
-                                StreamReader readerStream = null;
-
-                                if(response.CharacterSet == null)
-                                {
-                                    readerStream = new StreamReader(dataStream);
-                                }
-                                else
-                                {
-                                    readerStream = new StreamReader(dataStream, Encoding.GetEncoding(response.CharacterSet));
-                                    
-                                    htmlCorreo = readerStream.ReadToEnd();
-                                    response.Close();
-                                    readerStream.Close();
-                                }
+                                readerStream = new StreamReader(dataStream);
                             }
+                            else
+                            {
+                                readerStream = new StreamReader(dataStream, Encoding.GetEncoding(response.CharacterSet));
 
-                            if (htmlCorreo != "")
-                                await _correoService.EnviarCorreo(usuario_creado.Correo, "Cuenta Creada", htmlCorreo);
-                           
+                                htmlCorreo = readerStream.ReadToEnd();
+                                response.Close();
+                                readerStream.Close();
+                            }
                         }
-                        IQueryable<Usuario> query = await _repositorio.Consultar(u=>u.IdUsuario == usuario_creado.IdUsuario);
-                        usuario_creado = query.Include(r=> r.IdRolNavigation).First();
 
-                        return usuario_creado;
+                        if (htmlCorreo != "")
+                            await _correoService.EnviarCorreo(usuario_creado.Correo, "Cuenta Creada", htmlCorreo);
                     }
+                    IQueryable<Usuario> query = await _repositorio.Consultar(u => u.IdUsuario == usuario_creado.IdUsuario);
+                    usuario_creado = query.Include(r => r.IdRolNavigation).First();
                 }
-                catch (Exception ex)
-                {
-                    throw;
-                }
+                return usuario_creado;
             }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
 
-        public Task<Usuario> Editar(Usuario entidad, Stream foto = null, string NombreFoto = "")
+        public async Task<Usuario> Editar(Usuario entidad, Stream foto = null, string NombreFoto = "")
         {
-            throw new NotImplementedException();
+            Usuario usuario_existe = await _repositorio.Obtener(user => user.Correo == entidad.Correo && user.IdUsuario!=entidad.IdUsuario);
+            if (usuario_existe != null)
+                throw new TaskCanceledException("El correo ya existe");
+
+            try
+            {
+                IQueryable<Usuario> queryUsuario=await _repositorio.Consultar(u=>u.IdUsuario==entidad.IdUsuario);
+                Usuario usuario_editar = queryUsuario.First();
+                usuario_editar.Nombre = entidad.Nombre;
+                usuario_editar.Correo = entidad.Correo;
+                usuario_editar.Telefono = entidad.Telefono;
+                usuario_editar.IdRol= entidad.IdRol;
+
+                if (usuario_editar.NombreFoto == "")
+                    usuario_editar.NombreFoto = NombreFoto;
+
+                if (foto!=null)
+                {
+                    string urlFoto = await _firebaseService.SubirStorage(foto, "carpeta_usuario", usuario_editar.NombreFoto);
+                    usuario_editar.UrlFoto = urlFoto;
+                }
+
+                bool respuesta = await _repositorio.Editar(usuario_editar);
+
+                if (!respuesta)
+                    throw new TaskCanceledException("No se pudo modificar el usuario");
+
+                Usuario usuario_editado = queryUsuario.Include(r => r.IdRolNavigation).First();
+
+                return usuario_editado;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public Task<bool> Eliminar(int IdUsuario)
