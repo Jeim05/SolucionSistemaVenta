@@ -1,4 +1,4 @@
-﻿namespace SistemaVenta.AplicacionWeb.Models
+﻿namespace SistemaVenta.AplicacionWeb.Models.ViewModels
 {
     public class VMProductosSemana
     {

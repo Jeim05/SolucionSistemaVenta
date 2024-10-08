@@ -1,6 +1,6 @@
 ﻿using SistemaVenta.Entity;
 
-namespace SistemaVenta.AplicacionWeb.Models
+namespace SistemaVenta.AplicacionWeb.Models.ViewModels
 {
     // Se crean estas clases Vista de Modelo ya que no es buena 
     //practica trabajar directamente con los modelos
