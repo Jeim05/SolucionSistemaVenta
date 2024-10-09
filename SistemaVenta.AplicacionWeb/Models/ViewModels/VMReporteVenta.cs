@@ -12,7 +12,7 @@
 
         public string? NombreCliente { get; set; }
 
-        public string? SubtotalVente { get; set; }
+        public string? SubtotalVenta { get; set; }
 
         public string? ImpuestoTotalVenta { get; set; }
 
