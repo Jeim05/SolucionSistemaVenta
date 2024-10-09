@@ -93,6 +93,54 @@ namespace SistemaVenta.AplicacionWeb.Utilidades.Automapper
                  opt => opt.MapFrom(origen => Convert.ToDecimal(origen.Precio, new CultureInfo("es-CR")))
               );
             #endregion
+
+            #region TipoDocuemnto
+            CreateMap<TipoDocumentoVenta, VMTipoDocumentoVenta>().ReverseMap();
+            #endregion
+
+            #region Venta 
+            CreateMap<Venta, VMVenta>()
+             .ForMember(destino =>
+              destino.TipoDocumentoVenta,
+              opt => opt.MapFrom(origen => origen.IdTipoDocumentoVentaNavigation.Descripcion)
+              )
+             .ForMember(destino =>
+              destino.Usuario,
+              opt => opt.MapFrom(origen => origen.IdUsuarioNavigation.Nombre)
+              )
+             .ForMember(destino =>
+              destino.SubTotal,
+              opt => opt.MapFrom(origen => Convert.ToString(origen.SubTotal.Value, new CultureInfo("es-CR")))
+              )
+             .ForMember(destino =>
+              destino.ImpuestoTotal,
+              opt => opt.MapFrom(origen => Convert.ToString(origen.ImpuestoTotal.Value, new CultureInfo("es-CR")))
+              )
+             .ForMember(destino =>
+              destino.Total,
+              opt => opt.MapFrom(origen => Convert.ToString(origen.Total.Value, new CultureInfo("es-CR")))
+              )
+             .ForMember(destino =>
+              destino.FechaRegistro,
+              opt => opt.MapFrom(origen => origen.FechaRegistro.Value.ToString("dd/MM/yyyy"))
+              );
+
+            CreateMap<VMVenta, Venta>()
+            .ForMember(destino =>
+             destino.SubTotal,
+             opt => opt.MapFrom(origen => Convert.ToDecimal(origen.SubTotal, new CultureInfo("es-CR")))
+             )
+            .ForMember(destino =>
+             destino.ImpuestoTotal,
+             opt => opt.MapFrom(origen => Convert.ToDecimal(origen.ImpuestoTotal, new CultureInfo("es-CR")))
+             )
+            .ForMember(destino =>
+             destino.Total,
+             opt => opt.MapFrom(origen => Convert.ToDecimal(origen.Total, new CultureInfo("es-CR")))
+             );
+
+
+            #endregion
         }
     }
 }
