@@ -21,7 +21,7 @@ namespace SistemaVenta.BLL.Implementacion
         // devuelve la lista de roles
         public async Task<List<Rol>> Lista()
         {
-            IQueryable<Rol> query = await _repositorio.Consulta();
+            IQueryable<Rol> query = await _repositorio.Consultar();
             return query.ToList();
         }
     }

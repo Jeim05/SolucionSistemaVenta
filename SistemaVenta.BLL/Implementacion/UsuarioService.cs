@@ -263,31 +263,27 @@ namespace SistemaVenta.BLL.Implementacion
                         StreamReader readerStream = null;
 
                         if (response.CharacterSet == null)
-                        {
                             readerStream = new StreamReader(dataStream);
-                        }
                         else
-                        {
                             readerStream = new StreamReader(dataStream, Encoding.GetEncoding(response.CharacterSet));
 
-                            htmlCorreo = readerStream.ReadToEnd();
-                            response.Close();
-                            readerStream.Close();
-                        }
+                        htmlCorreo = readerStream.ReadToEnd();
+                        response.Close();
+                        readerStream.Close();
+
                     }
-
-                    bool correo_enviado = false;
-
-                    if (htmlCorreo != "")
-                        correo_enviado = await _correoService.EnviarCorreo(Correo, "Contraseña Reestablecida", htmlCorreo);
-
-                    if (!correo_enviado)
-                        throw new TaskCanceledException("Tenemos problemas, por favor intentalo de nuevo más tarde");
-
-                    bool respuesta = await _repositorio.Editar(usuario_encontrado);
-                    return respuesta;
-
                 }
+
+                bool correo_enviado = false;
+
+                if (htmlCorreo != "")
+                    correo_enviado = await _correoService.EnviarCorreo(Correo, "Contraseña Reestablecida", htmlCorreo);
+
+                if (!correo_enviado)
+                    throw new TaskCanceledException("Tenemos problemas, por favor intentalo de nuevo más tarde");
+
+                bool respuesta = await _repositorio.Editar(usuario_encontrado);
+                return respuesta;
 
             }
             catch (Exception)

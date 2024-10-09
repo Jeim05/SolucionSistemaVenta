@@ -28,6 +28,6 @@ namespace SistemaVenta.AplicacionWeb.Models.ViewModels
 
         public string? FechaRegistro { get; set; }
 
-        public virtual ICollection<VMDetalleVenta> DetalleVenta { get; set; } = new List<DetalleVenta>();
+        public virtual ICollection<VMDetalleVenta> DetalleVenta { get; set; }
     }
 }
