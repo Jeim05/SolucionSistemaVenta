@@ -51,7 +51,47 @@ namespace SistemaVenta.AplicacionWeb.Utilidades.Automapper
             #endregion
 
             #region Categoria
+            CreateMap<Categoria, VmCategoria>()
+                .ForMember(destino =>
+                destino.esActivo,
+                opt => opt.MapFrom(origen => origen.EsActivo == true ? 1 : 0)
+                );
 
+            CreateMap<VmCategoria, Categoria>()
+              .ForMember(destino =>
+              destino.EsActivo,
+              opt => opt.MapFrom(origen => origen.esActivo == 1 ? true : false)
+              );
+            #endregion
+
+            #region PRODUCTO
+            CreateMap<Producto, VMProducto>()
+             .ForMember(destino =>
+              destino.EsActivo,
+              opt => opt.MapFrom(origen => origen.EsActivo == true ? 1 : 0)
+              )
+             .ForMember(destino =>
+               destino.NombreCategoria,
+              opt => opt.MapFrom(origen => origen.IdCategoriaNavigation.Descripcion)
+              )
+             .ForMember(destino =>
+                 destino.Precio,
+                 opt => opt.MapFrom(origen => Convert.ToString(origen.Precio.Value, new CultureInfo("es-CR")))
+              );
+
+            CreateMap<VMProducto, Producto>()
+             .ForMember(destino =>
+              destino.EsActivo,
+              opt => opt.MapFrom(origen => origen.EsActivo == 1 ? true : false)
+              )
+             .ForMember(destino =>
+               destino.IdCategoriaNavigation,
+              opt => opt.Ignore()
+              )
+             .ForMember(destino =>
+                 destino.Precio,
+                 opt => opt.MapFrom(origen => Convert.ToDecimal(origen.Precio, new CultureInfo("es-CR")))
+              );
             #endregion
         }
     }
