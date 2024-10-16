@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using SistemaVenta.DAL.DBContext;
+﻿using SistemaVenta.DAL.DBContext;
 using SistemaVenta.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -85,11 +79,6 @@ namespace SistemaVenta.DAL.Implementacion
             // si el filtro es != null se hace la consulta
             IQueryable<TEntity> queryEntidad = filtro == null ? _dbContext.Set<TEntity>() : _dbContext.Set<TEntity>().Where(filtro);
             return queryEntidad;
-        }
-
-        public Task<IQueryable<TEntity>> Consulta(Expression<Func<TEntity, bool>> filtro = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }

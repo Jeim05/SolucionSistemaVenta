@@ -11,7 +11,7 @@
 let tablaData;
 
 $(document).ready(function () {
-
+    debugger
     $('#tbdata').DataTable({
         responsive: true,
          "ajax": {
