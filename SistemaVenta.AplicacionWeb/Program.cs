@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.InyectarDependencia(builder.Configuration);
 
 // Se importa la libreria de automapper
-//builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 
